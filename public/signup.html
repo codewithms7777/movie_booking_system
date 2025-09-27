@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Movie Ticket Booking</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header class="main-header">
+        <h1>🎬 Movie Ticket Booking</h1>
+        <div class="auth-buttons">
+            <a href="index.html"><button class="auth-btn">Home</button></a>
+            <a href="login.html"><button class="auth-btn">Login</button></a>
+        </div>
+    </header>
+
+    <main style="max-width: 400px; margin: 2rem auto;">
+        <div class="payment-form" style="text-align: center;">
+            <h2>Create Account</h2>
+            <form id="signup-form">
+                <input type="text" placeholder="Full Name" id="name" required style="width: 100%; margin: 10px 0;">
+                <input type="email" placeholder="Email Address" id="email" required style="width: 100%; margin: 10px 0;">
+                <input type="password" placeholder="Password" id="password" required style="width: 100%; margin: 10px 0;">
+                <button type="submit" class="pay-btn" style="width: 100%;">Sign Up</button>
+            </form>
+            <p style="margin-top: 1rem;">Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Account created successfully',
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.href = 'login.html';
+                    });
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Network error. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

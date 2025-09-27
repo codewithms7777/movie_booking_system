@@ -1,1 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Movie Ticket Booking</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Welcome Message -->
+    <div id="welcome-msg" class="hidden"></div>
 
+    <header class="main-header">
+        <h1>🎬 Movie Ticket Booking</h1>
+        <div class="auth-buttons">
+            <button id="logout-btn" class="auth-btn hidden">Logout</button>
+            <a href="login.html"><button class="auth-btn" id="login-btn">Login</button></a>
+            <a href="signup.html"><button class="auth-btn" id="signup-btn">Sign Up</button></a>
+        </div>
+    </header>
+
+    <main id="app">
+        <!-- Dashboard -->
+        <section id="dashboard-section">
+            <div class="dashboard">
+                <h2>Welcome to Movie Ticket Booking</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🎭 Wide Selection</h3>
+                        <p>Choose from our collection of blockbuster movies</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💺 Easy Seat Selection</h3>
+                        <p>Interactive seat map for best viewing experience</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔒 Secure Booking</h3>
+                        <p>Safe and secure payment processing</p>
+                    </div>
+                </div>
+                <button onclick="startBooking()" class="cta-button">Start Booking Now</button>
+            </div>
+        </section>
+
+        <!-- Movie Selection -->
+        <section id="movie-section" class="hidden">
+            <h2>🎬 Select a Movie</h2>
+            <div class="movie-list">
+                <div class="movie-card" onclick="selectMovie('Avengers: Endgame', 180)">
+                    <img src="https://i.ebayimg.com/images/g/cR0AAOSwOupg4Yhq/s-l1200.jpg" alt="Avengers">
+                    <h3>Avengers: Endgame</h3>
+                    <p>Sci-Fi/Superhero • 3h 1m</p>
+                    <span class="price">₹180</span>
+                </div>
+                <div class="movie-card" onclick="selectMovie('Spirited Away', 160)">
+                    <img src="https://www.tallengestore.com/cdn/shop/products/SpiritedAway-Miyazaki-StudioGhibliJapanaeseAnimatedMoviePoster_ae518415-8719-466e-90d4-630ea877d657.jpg?v=1642160565" alt="Spirited Away">
+                    <h3>Spirited Away</h3>
+                    <p>Fantasy/Anime • 2h 28m</p>
+                    <span class="price">₹160</span>
+                </div>
+                <div class="movie-card" onclick="selectMovie('Dangal', 170)">
+                    <img src="https://m.media-amazon.com/images/I/71NiFuBLemL._UF894,1000_QL80_.jpg" alt="Dangal">
+                    <h3>Dangal</h3>
+                    <p>Sport/Action • 2h 32m</p>
+                    <span class="price">₹170</span>
+                </div>
+                <div class="movie-card" onclick="selectMovie('Interstellar', 175)">
+                    <img src="https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Interstellar">
+                    <h3>Interstellar</h3>
+                    <p>Sci-Fi/Adventure • 2h 49m</p>
+                    <span class="price">₹175</span>
+                </div>
+            </div>
+            <button onclick="goBackToDashboard()" class="back-btn">← Back to Dashboard</button>
+        </section>
+
+        <!-- Seat Selection -->
+        <section id="seat-section" class="hidden">
+            <h2>💺 Select Seats for <span id="selected-movie-name"></span></h2>
+            <div class="screen">SCREEN</div>
+            
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="seat-sample available"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="seat-sample selected"></div>
+                    <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                    <div class="seat-sample occupied"></div>
+                    <span>Booked</span>
+                </div>
+            </div>
+
+            <div class="seats-grid" id="seats-grid"></div>
+            
+            <div class="seat-info">
+                <label>Show Time:
+                    <select id="show-time" onchange="updateAvailableSeats()">
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="1:00 PM">1:00 PM</option>
+                        <option value="4:00 PM">4:00 PM</option>
+                        <option value="7:00 PM">7:00 PM</option>
+                    </select>
+                </label>
+                
+                <div class="booking-summary">
+                    <h3>Booking Summary</h3>
+                    <p>Movie: <span id="summary-movie"></span></p>
+                    <p>Show Time: <span id="summary-time"></span></p>
+                    <p>Seats: <span id="summary-seats">None</span></p>
+                    <p>Total: ₹<span id="summary-amount">0</span></p>
+                </div>
+                
+                <button onclick="goToPayment()" class="proceed-btn">Proceed to Payment</button>
+                <button onclick="goBackToMovies()" class="back-btn">← Back to Movies</button>
+            </div>
+        </section>
+
+        <!-- Payment -->
+        <section id="payment-section" class="hidden">
+            <h2>💳 Payment Gateway</h2>
+            <div class="payment-container">
+                <div class="payment-summary">
+                    <h3>Order Summary</h3>
+                    <p>Movie: <span id="payment-movie"></span></p>
+                    <p>Show Time: <span id="payment-time"></span></p>
+                    <p>Seats: <span id="payment-seats"></span></p>
+                    <p>Total Amount: ₹<span id="payment-amount">0</span></p>
+                </div>
+
+                <div class="payment-form">
+                    <h3>Card Details</h3>
+                    <input type="text" placeholder="Card Number" id="card-number" maxlength="16" />
+                    <input type="text" placeholder="Name on Card" id="card-name" />
+                    <div class="card-details">
+                        <input type="text" placeholder="MM/YY" id="card-expiry" maxlength="5" />
+                        <input type="text" placeholder="CVV" id="card-cvv" maxlength="3" />
+                    </div>
+                    <button onclick="confirmBooking()" class="pay-btn">Confirm Payment</button>
+                    <button onclick="goBackToSeats()" class="back-btn">← Back to Seats</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirmation -->
+        <section id="confirmation-section" class="hidden">
+            <div class="confirmation-container">
+                <div class="confirmation-icon">✅</div>
+                <h2>Booking Confirmed!</h2>
+                <div class="booking-details">
+                    <p>🎬 <strong id="confirm-movie"></strong></p>
+                    <p>💺 Seats: <span id="confirm-seats"></span></p>
+                    <p>🕒 Time: <span id="confirm-time"></span></p>
+                    <p>💰 Total: ₹<span id="confirm-amount"></span></p>
+                    <p>📧 Email: <span id="confirm-email"></span></p>
+                    <p>🆔 Booking ID: <span id="confirm-booking-id"></span></p>
+                </div>
+                <button onclick="goToDashboard()" class="home-btn">Back to Home</button>
+                <button onclick="viewBookings()" class="bookings-btn">View My Bookings</button>
+            </div>
+        </section>
+
+        <!-- My Bookings -->
+        <section id="bookings-section" class="hidden">
+            <h2>📋 My Bookings</h2>
+            <div id="bookings-list" class="bookings-list"></div>
+            <button onclick="goToDashboard()" class="home-btn">Back to Home</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

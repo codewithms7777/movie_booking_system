@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Movie Ticket Booking</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header class="main-header">
+        <h1>🎬 Movie Ticket Booking</h1>
+        <div class="auth-buttons">
+            <a href="index.html"><button class="auth-btn">Home</button></a>
+            <a href="signup.html"><button class="auth-btn">Sign Up</button></a>
+        </div>
+    </header>
+
+    <main style="max-width: 400px; margin: 2rem auto;">
+        <div class="payment-form" style="text-align: center;">
+            <h2>Login to Your Account</h2>
+            <form id="login-form">
+                <input type="email" placeholder="Email Address" id="email" required style="width: 100%; margin: 10px 0;">
+                <input type="password" placeholder="Password" id="password" required style="width: 100%; margin: 10px 0;">
+                <button type="submit" class="pay-btn" style="width: 100%;">Login</button>
+            </form>
+            <p style="margin-top: 1rem;">Don't have an account? <a href="signup.html">Sign up here</a></p>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userName', result.name);
+                    localStorage.setItem('userEmail', result.email);
+                    
+                    Swal.fire({
+                        title: 'Welcome!',
+                        text: `Hello ${result.name}!`,
+                        icon: 'success'
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Network error. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
